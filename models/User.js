@@ -1,29 +1,49 @@
-const mongoose=require('mongoose')
-const bcrypt=require('bcryptjs')
-const Schema=mongoose.Schema;
+const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
+const Schema = mongoose.Schema;
 
-const UserShcema=new Schema({
-    name:{
-        type: String ,
+const UserShcema = new Schema({
+    name: {
+        type: String,
         require: true
     },
-    email:{
-        type: String ,
+    email: {
+        type: String,
         require: true
     },
-    password:{
-        type: String ,
+    password: {
+        type: String,
         require: true
     },
-    avatar:{
-        type: String ,
+    avatar: {
+        type: String,
         require: true
     },
-    data:{
+    data: {
         type: Date,
         default: Date.now
     }
 });
+
+UserShcema.statics.findUser = function (email, password) {
+    let User = this;
+
+    return User.findOne({ email }).then((user) => {
+        if (!user) {
+            return Promise.reject();
+        }
+        return new Promise((resolve, reject) => {
+            bcrypt.compare(password, user.password, (err, res) => {
+                if (res) {
+                    console.log(user);
+                    return resolve(user);
+                } else {
+                    reject();
+                }
+            });
+        });
+    });
+};
 
 UserShcema.pre('save', function (next) {
     let user = this;
@@ -40,6 +60,7 @@ UserShcema.pre('save', function (next) {
     }
 });
 
-const User=mongoose.model('users',UserShcema);
 
-module.exports=User;
+const User = mongoose.model('users', UserShcema);
+
+module.exports = User;
