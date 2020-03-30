@@ -1,8 +1,9 @@
 const express = require('express')
 const gravatar = require('gravatar');
 const jwt = require('jsonwebtoken');
-const secretKey = require('../../config/keys').secretKey;
+const passport=require('passport');
 
+const secretKey = require('../../config/keys').secretKey;
 const User = require('../../models/User');
 
 const router = express.Router();
@@ -57,6 +58,10 @@ router.post('/login', (req, res) => {
     }).catch(err => {
         res.send(err)
     })
+})
+
+router.get('/current',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    res.json(req.user);
 })
 
 
