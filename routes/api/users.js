@@ -1,5 +1,7 @@
 const express = require('express')
 const gravatar = require('gravatar');
+const jwt = require('jsonwebtoken');
+const secretKey = require('../../config/keys').secretKey;
 
 const User = require('../../models/User');
 
@@ -43,8 +45,15 @@ router.post('/register', (req, res) => {
 router.post('/login', (req, res) => {
     let { email, password } = req.body;
 
-    User.findUser(email, password).then(doc => {
-        res.send(doc);
+    User.findUser(email, password).then(user => {
+        const payload = { id: user.id, name: user.name }
+
+        jwt.sign(payload, secretKey, { expiresIn: 3600 }, (err, token) => {
+            res.send({
+                success: true,
+                token: "Bearer " + token
+            })
+        })
     }).catch(err => {
         res.send(err)
     })
