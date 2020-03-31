@@ -1,10 +1,11 @@
 const express = require('express')
 const gravatar = require('gravatar');
 const jwt = require('jsonwebtoken');
-const passport=require('passport');
+const passport = require('passport');
 
 const secretKey = require('../../config/keys').secretKey;
 const User = require('../../models/User');
+const validRigsterInput = require('../../validation/register')
 
 const router = express.Router();
 
@@ -17,6 +18,12 @@ router.get('/', (req, res) => res.json({ msg: "welcome to the users page!" }));
 // @desc      Register users
 // @access    Public
 router.post('/register', (req, res) => {
+
+    let { errors, isValid } = validRigsterInput(req.body);
+    if (!isValid) {
+        return res.json({ errors });
+    }
+
     let { name, email, password } = req.body;
     User.findOne({ email }).then(user => {
         if (user) {
@@ -44,6 +51,7 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
+
     let { email, password } = req.body;
 
     User.findUser(email, password).then(user => {
@@ -60,7 +68,7 @@ router.post('/login', (req, res) => {
     })
 })
 
-router.get('/current',passport.authenticate('jwt',{session:false}),(req,res)=>{
+router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
     res.json(req.user);
 })
 
