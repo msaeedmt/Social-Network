@@ -56,7 +56,7 @@ const ProfileSchema = new Schema({
             },
             current: {
                 tyep: Boolean,
-                default:false
+                default: false
             },
             description: {
                 type: String
@@ -75,7 +75,7 @@ const ProfileSchema = new Schema({
             },
             fieldOfStudy: {
                 type: String,
-                required:true
+                required: true
             },
             from: {
                 type: Date,
@@ -86,33 +86,33 @@ const ProfileSchema = new Schema({
             },
             current: {
                 tyep: Boolean,
-                default:false
+                default: false
             },
             description: {
                 type: String
             }
         }
     ],
-    social:{
-        youtube:{
-            type:String
+    social: {
+        youtube: {
+            type: String
         },
-        twitter:{
-            type:String
+        twitter: {
+            type: String
         },
-        facebook:{
-            type:String
+        facebook: {
+            type: String
         },
-        linkedin:{
-            type:String
+        linkedin: {
+            type: String
         },
-        instagram:{
-            type:String
+        instagram: {
+            type: String
         }
     },
-    date:{
-        type:Date,
-        default:Date.now
+    date: {
+        type: Date,
+        default: Date.now
     }
 });
 

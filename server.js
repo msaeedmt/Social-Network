@@ -18,7 +18,7 @@ require('./config/passport')(passport);
 const port = process.env.PORT || 3000;
 
 app.use('/api/users', users);
-app.use('/api/porfiles', profiles);
+app.use('/api/profiles', profiles);
 app.use('/api/posts', posts);
 
 app.listen(port, () => console.log('connected to the server ...'))
