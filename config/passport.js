@@ -15,7 +15,7 @@ module.exports = passport => {
                 return done(null, user);
             }
             return done(null, false);
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err);
         })
     }));

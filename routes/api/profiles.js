@@ -5,7 +5,9 @@ const passport = require('passport');
 
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
-const validateProfileInput = require('../../validation/profile')
+const validateProfileInput = require('../../validation/profile');
+const validateExperienceInput = require('../../validation/experience');
+const validateEducationInput=require('../../validation/education')
 
 
 // @route     GET api/profiles
@@ -90,7 +92,7 @@ router.get('/user/:user_id', (req, res) => {
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
     const { errors, isValid } = validateProfileInput(req.body);
     if (!isValid) {
-        res.status(400).json(errors);
+        return res.status(400).json(errors);
     }
 
     const user = req.user.id;
@@ -144,9 +146,13 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 // @route     POST api/profiles/experience
 // @desc      add experience to user
 // @access    private
-router.get('/experience', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.post('/experience', passport.authenticate('jwt', { session: false }), (req, res) => {
+    const { errors, isValid } = validateExperienceInput(req.body);
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+
     const { title, company, location, from, to, current, description } = req.body;
-    let errors = {};
 
     Profile.findOne({ user: req.user.id })
         .then(profile => {
@@ -156,7 +162,35 @@ router.get('/experience', passport.authenticate('jwt', { session: false }), (req
 
             profile.experience.unshift(newExp);
 
-            profile.save().then(profile => res.json(profile));
+            profile.save()
+                .then(profile => res.json(profile))
+                .catch(err => res.json(err));
+        })
+});
+
+
+// @route     POST api/profiles/education
+// @desc      add education to user
+// @access    private
+router.post('/education', passport.authenticate('jwt', { session: false }), (req, res) => {
+    const { errors, isValid } = validateEducationInput(req.body);
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+
+    const { school, degree, fieldOfStudy, from, to, current, description } = req.body;
+
+    Profile.findOne({ user: req.user.id })
+        .then(profile => {
+            const newEdu = {
+                school, degree, fieldOfStudy, from, to, current, description
+            }
+
+            profile.education.unshift(newEdu);
+
+            profile.save()
+                .then(profile => res.json(profile))
+                .catch(err => res.json(err));
         })
 });
 

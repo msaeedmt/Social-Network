@@ -63,7 +63,7 @@ router.post('/login', (req, res) => {
     User.findUser(email, password).then(user => {
         const payload = { id: user.id, name: user.name }
 
-        jwt.sign(payload, secretKey, { expiresIn: 3600 }, (err, token) => {
+        jwt.sign(payload, secretKey, { expiresIn: 360000 }, (err, token) => {
             res.send({
                 success: true,
                 token: "Bearer " + token
