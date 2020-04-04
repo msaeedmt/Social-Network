@@ -69,4 +69,52 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
         }).catch(err => res.status(400).json(err));
 });
 
+
+// @route     POST api/posts/like/:id
+// @desc      like a post
+// @access    private
+router.post('/like/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Profile.findOne({ user: req.user.id })
+        .then(Profile => {
+            Post.findById(req.params.id)
+                .then(post => {
+                    if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
+                        res.status(400).json({ alreadyLiked: 'User already liked this post!' });
+                    }
+
+                    post.likes.unshift({ user: req.user.id });
+
+                    post.save()
+                        .then(post => res.json(post))
+                        .catch(err => res.json(err));
+                }).catch(err => res.json(err));
+        }).catch(err => res.status(400).json(err));
+});
+
+
+// @route     POST api/posts/unlike/:id
+// @desc      unlike a post
+// @access    private
+router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Profile.findOne({ user: req.user.id })
+        .then(Profile => {
+            Post.findById(req.params.id)
+                .then(post => {
+                    if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
+                        res.status(400).json({ nolike: 'You have not yet liked this post!' });
+                    }
+
+                    const removeIndex = post.likes
+                        .map(item => item.user.toString())
+                        .indexOf(req.user.id);
+
+                    post.likes.splice(removeIndex, 1);
+
+                    post.save()
+                        .then(post => res.json(post))
+                        .catch(err => res.json(err));
+                }).catch(err => res.json(err));
+        }).catch(err => res.status(400).json(err));
+});
+
 module.exports = router;
