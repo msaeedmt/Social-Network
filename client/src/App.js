@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux'
+import store from './store'
 
 import './App.css';
 
@@ -11,13 +11,12 @@ import Landing from './components/layout/Landing';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 
-const store = createStore(() => [], {}, applyMiddleware());
 
 function App() {
   return (
-    <div className="App">
-      <Provider store={store}>
-        <Router>
+    <Provider store={store}>
+      <Router>
+        <div className="App">
           <Navbar />
           <Route exact path='/' component={Landing} />
           <div className="container">
@@ -25,9 +24,9 @@ function App() {
             <Route exact path='/login' component={Login} />
           </div>
           <Footer />
-        </Router>
-      </Provider>
-    </div>
+        </div>
+      </Router>
+    </Provider>
   );
 }
 
