@@ -17,7 +17,6 @@ const UserShcema = new Schema({
     },
     avatar: {
         type: String,
-        require: true
     },
     data: {
         type: Date,

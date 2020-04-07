@@ -1,29 +1,32 @@
 const validator = require('validator');
-const _ = require('lodash')
+const isEmpty = require('./is-empty');
 
 module.exports = function validateEducationInput(data) {
     var errors = {};
 
-    // data.email = !_.isEmpty(data.email) ? data.email : '';
+    data.school = !isEmpty(data.school) ? data.school : '';
+    data.degree = !isEmpty(data.degree) ? data.degree : '';
+    data.fieldOfStudy = !isEmpty(data.fieldOfStudy) ? data.fieldOfStudy : '';
+    data.form = !isEmpty(data.form) ? data.form : '';
 
-    if (_.isEmpty(data.school)) {
+    if (validator.isEmpty(data.school)) {
         errors.school = 'School field is required!';
     }
 
-    if (_.isEmpty(data.degree)) {
+    if (validator.isEmpty(data.degree)) {
         errors.degree = 'Degree field is required!';
     }
 
-    if (_.isEmpty(data.fieldOfStudy)) {
+    if (validator.isEmpty(data.fieldOfStudy)) {
         errors.fieldOfStudy = 'Field of study field is required!';
     }
 
-    if (_.isEmpty(data.from)) {
+    if (validator.isEmpty(data.from)) {
         errors.from = 'From date field is required!';
     }
 
     return {
         errors,
-        isValid: _.isEmpty(errors)
+        isValid: isEmpty(errors)
     }
 }

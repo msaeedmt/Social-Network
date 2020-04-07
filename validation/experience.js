@@ -1,25 +1,27 @@
 const validator = require('validator');
-const _ = require('lodash')
+const isEmpty = require('./is-empty');
 
 module.exports = function validateExperienceInput(data) {
     var errors = {};
 
-    // data.email = !_.isEmpty(data.email) ? data.email : '';
+    data.title = !isEmpty(data.title) ? data.title : '';
+    data.company = !isEmpty(data.company) ? data.company : '';
+    data.from = !isEmpty(data.from) ? data.from : '';
 
-    if (_.isEmpty(data.title)) {
+    if (validator.isEmpty(data.title)) {
         errors.title = 'Job title field is required!';
     }
 
-    if (_.isEmpty(data.company)) {
+    if (validator.isEmpty(data.company)) {
         errors.company = 'Compnay field is required!';
     }
 
-    if (_.isEmpty(data.from)) {
+    if (validator.isEmpty(data.from)) {
         errors.from = 'From date field is required!';
     }
 
     return {
         errors,
-        isValid: _.isEmpty(errors)
+        isValid: isEmpty(errors)
     }
 }
