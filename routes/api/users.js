@@ -2,6 +2,7 @@ const express = require('express')
 const gravatar = require('gravatar');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const bcrypt = require('bcryptjs');
 
 const secretKey = require('../../config/keys').secretKey;
 const User = require('../../models/User');
@@ -51,27 +52,53 @@ router.post('/register', (req, res) => {
     })
 });
 
+
+// @route     POST api/users/login
+// @desc      login user
+// @access    Public
 router.post('/login', (req, res) => {
 
     let { errors, isValid } = validLoginInput(req.body);
     if (!isValid) {
-        return res.json({ errors });
+        return res.status(400).json({ errors });
     }
 
-    let { email, password } = req.body;
+    const { email, password } = req.body;
 
-    User.findUser(email, password).then(user => {
-        const payload = { id: user.id, name: user.name }
+    User.findOne({ email }).then(user => {
+        if (!user) {
+            errors.email = 'Email not found!';
+            return res.status(400).json(errors);
+        }
 
-        jwt.sign(payload, secretKey, { expiresIn: 360000 }, (err, token) => {
-            res.send({
-                success: true,
-                token: "Bearer " + token
-            })
-        })
-    }).catch(err => {
-        res.send(err)
+        bcrypt.compare(password, user.password).then(isMatch => {
+            if (isMatch) {
+                const payload = { id: user.id, name: user.name }
+
+                jwt.sign(payload, secretKey, { expiresIn: 360000 }, (err, token) => {
+                    res.send({
+                        success: true,
+                        token: "Bearer " + token
+                    })
+                })
+            } else {
+                errors.email = 'Password incorrect!'
+                return res.status(400).json(errors);
+            }
+        }).catch(err => res.json(errors));
     })
+    // User.findUser(email, password).then(user => {
+    //     const payload = { id: user.id, name: user.name }
+
+    //     jwt.sign(payload, secretKey, { expiresIn: 360000 }, (err, token) => {
+    //         res.send({
+    //             success: true,
+    //             token: "Bearer " + token
+    //         })
+    //     })
+    // }).catch(err => {
+    //     res.json(err)
+    // })
 })
 
 router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
