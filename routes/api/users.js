@@ -6,7 +6,7 @@ const passport = require('passport');
 const secretKey = require('../../config/keys').secretKey;
 const User = require('../../models/User');
 const validRigsterInput = require('../../validation/register');
-const validLoginInput=require('../../validation/login');
+const validLoginInput = require('../../validation/login');
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.post('/register', (req, res) => {
 
     let { errors, isValid } = validRigsterInput(req.body);
     if (!isValid) {
-        return res.json({ errors });
+        return res.status(400).json({ errors });
     }
 
     let { name, email, password } = req.body;
